@@ -14,7 +14,7 @@ import andrey.service.CollectorService;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class CollectorController {
-    private CollectorService collectorService;
+    private final CollectorService collectorService;
 
     @PostMapping("/sensors")
     public void handleSensorEvent(@Valid @RequestBody SensorEvent event) {
