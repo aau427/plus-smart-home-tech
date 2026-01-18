@@ -21,6 +21,10 @@ public class ScenarioCondition {
     @NotNull(message = "Операции для условий не могут быть пустыми")
     private ConditionOperation operation;
 
-    @NotNull(message = "Значение для условия не может быть пустым")
-    private Object value;
+    /*
+        согласно тз: значение для сравнения в условиях.
+         Может быть не задано, если неприменимо (null) ...
+     */
+
+    private Integer value;
 }

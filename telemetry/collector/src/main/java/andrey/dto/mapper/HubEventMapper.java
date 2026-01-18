@@ -64,12 +64,23 @@ public class HubEventMapper {
     }
 
     private ScenarioConditionAvro mapCondition(ScenarioCondition condition) {
-        return ScenarioConditionAvro.newBuilder()
+        var builder = ScenarioConditionAvro.newBuilder()
                 .setSensorId(condition.getSensorId())
                 .setType(ConditionTypeAvro.valueOf(condition.getType().name()))
-                .setOperation(ConditionOperationAvro.valueOf(condition.getOperation().name()))
-                .setValue(condition.getValue())
-                .build();
+                .setOperation(ConditionOperationAvro.valueOf(condition.getOperation().name()));
+
+        Object newValueForAvro;
+        if (condition.getValue() != null) {
+            switch (condition.getType()) {
+                case MOTION, SWITCH:
+                    newValueForAvro = (condition.getValue() != 0);
+                default:
+                    newValueForAvro = condition.getValue();
+            }
+            builder.setValue(newValueForAvro);
+        }
+
+        return builder.build();
     }
 
     private List<DeviceActionAvro> mapActions(List<DeviceAction> actions) {
