@@ -1,6 +1,7 @@
 package andrey.dto.mapper;
 
 import andrey.dto.hub.*;
+import andrey.exception.UnknownEventException;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
@@ -24,6 +25,8 @@ public class HubEventMapper {
             case DEVICE_REMOVED -> toAvro((DeviceRemovedEvent) event);
             case SCENARIO_ADDED -> toAvro((ScenarioAddedEvent) event);
             case SCENARIO_REMOVED -> toAvro((ScenarioRemovedEvent) event);
+            case UNKNOWN ->
+                    throw new UnknownEventException("Тип события не поддерживается. Id хаба: " + event.getHubId());
         };
     }
 

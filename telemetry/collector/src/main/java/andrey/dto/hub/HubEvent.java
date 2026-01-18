@@ -1,8 +1,8 @@
 package andrey.dto.hub;
 
+import andrey.dto.enums.HubEventType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import andrey.dto.enums.HubEventType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +17,7 @@ import java.time.Instant;
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "type",
-        //TODO: какая-то хрень, подумать
-        defaultImpl = HubEventType.class
+        defaultImpl = UnknownHubEvent.class
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DeviceAddedEvent.class, name = "DEVICE_ADDED"),
@@ -30,7 +29,6 @@ public abstract class HubEvent {
     @NotBlank(message = "Идентификатор хаба не может быть пустым")
     private String hubId;
 
-    //private Instant timestamp = Instant.now();
     private Instant timestamp = Instant.now();
 
     public abstract HubEventType getType();

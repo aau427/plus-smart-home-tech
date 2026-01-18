@@ -2,13 +2,13 @@ package andrey;
 
 import andrey.dto.hub.HubEvent;
 import andrey.dto.sensor.SensorEvent;
+import andrey.service.CollectorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import andrey.service.CollectorService;
 
 @RestController
 @RequestMapping("/events")

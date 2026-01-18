@@ -7,6 +7,8 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -17,11 +19,20 @@ public class KafkaClient implements AutoCloseable {
     public void close() {
         log.info("Закрываю KafkaClient: сбрасываю буфер, останавливаю продюсер kafka, закрываю сетевые соединения");
         kafkaProducer.flush();
-        kafkaProducer.close();
+        kafkaProducer.close(Duration.ofSeconds(30));
         log.info("Kafka клиент успешно закрыт!");
     }
 
-    public void sendEvent(String topic, String key, SpecificRecordBase record) {
+    public void sendEvent(String topic, String key, SpecificRecordBase record, long eventTimestamp) {
+        ProducerRecord<String, SpecificRecordBase> producerRecord = new ProducerRecord<>(
+                topic,
+                null,            //партицию Kafka выберет сама
+                eventTimestamp,  // 3. Тот самый TIMESTAMP события (в миллисекундах)
+                key,
+                record
+        );
+
+
         kafkaProducer.send(new ProducerRecord<>(topic, key, record), (recordMetadata, exception) -> {
             if (exception != null) {
                 log.error("Ошибка при отправке события в топик {}: {}", topic, exception.getMessage(), exception);
