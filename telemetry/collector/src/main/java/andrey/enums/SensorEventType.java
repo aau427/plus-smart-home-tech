@@ -1,4 +1,4 @@
-package andrey.dto.enums;
+package andrey.enums;
 
 public enum SensorEventType {
     MOTION_SENSOR_EVENT,
