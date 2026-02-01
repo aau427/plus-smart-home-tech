@@ -1,4 +1,4 @@
-package andrey.dto.enums;
+package andrey.enums;
 
 public enum HubEventType {
     DEVICE_ADDED,
