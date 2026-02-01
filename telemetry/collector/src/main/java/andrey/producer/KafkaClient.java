@@ -1,4 +1,4 @@
-package andrey.dto.kafka;
+package andrey.producer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +13,13 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaClient implements AutoCloseable {
-    private final KafkaProducer<String, SpecificRecordBase> kafkaProducer;
+    private final KafkaProducer<String, SpecificRecordBase> producer;
 
     @Override
     public void close() {
         log.info("Закрываю KafkaClient: сбрасываю буфер, останавливаю продюсер kafka, закрываю сетевые соединения");
-        kafkaProducer.flush();
-        kafkaProducer.close(Duration.ofSeconds(30));
+        producer.flush();
+        producer.close(Duration.ofSeconds(30));
         log.info("Kafka клиент успешно закрыт!");
     }
 
@@ -33,7 +33,7 @@ public class KafkaClient implements AutoCloseable {
         );
 
 
-        kafkaProducer.send(new ProducerRecord<>(topic, key, record), (recordMetadata, exception) -> {
+        producer.send(new ProducerRecord<>(topic, key, record), (recordMetadata, exception) -> {
             if (exception != null) {
                 log.error("Ошибка при отправке события в топик {}: {}", topic, exception.getMessage(), exception);
             } else {
