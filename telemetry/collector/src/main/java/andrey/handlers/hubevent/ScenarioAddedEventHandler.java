@@ -1,6 +1,7 @@
 package andrey.handlers.hubevent;
 
 import andrey.producer.KafkaClient;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.ScenarioAddedEventProto;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.kafka.telemetry.event.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class ScenarioAddedEventHandler extends AbstractHubEventHandler<ScenarioAddedEventAvro> {
     public ScenarioAddedEventHandler(KafkaClient kafkaClient) {
         super(kafkaClient);
