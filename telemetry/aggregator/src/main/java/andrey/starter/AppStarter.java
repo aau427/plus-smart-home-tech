@@ -40,13 +40,14 @@ public class AppStarter {
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
         try {
             consumer.subscribe(List.of(subscriptionTopic));
-            log.info("Успешно подписались на топик {}", subscriptionTopic);
+            log.info("Агрегатор: Успешно подписались на топик {}", subscriptionTopic);
             while (true) {
                 ConsumerRecords<String, SensorEventAvro> records =
                         consumer.poll(Duration.ofMillis(1000));
+                log.debug("Агрегатор: получено {} сообщений", records.count());
                 if (!records.isEmpty()) {
                     for (ConsumerRecord<String, SensorEventAvro> record : records) {
-                        log.info("Получено сообщение {}", record.value().getId());
+                        log.info("Агрегатор: Получено сообщение {}", record.value().getId());
                         Optional<SensorsSnapshotAvro> optEvent = service.updateState(record.value());
                         optEvent.ifPresent(this::sendSnapshot);
                     }
@@ -65,6 +66,10 @@ public class AppStarter {
     }
 
     private void sendSnapshot(SensorsSnapshotAvro snapshotAvro) {
+        log.debug("Агрегатор: отправляю снепшот для хаба {} в топик {}",
+                snapshotAvro.getHubId(),
+                topicForProducer);
+        log.debug("Агрегатор: текст снэпшота {}", snapshotAvro);
         final ProducerRecord<String, SensorsSnapshotAvro> record =
                 new ProducerRecord<>(topicForProducer, snapshotAvro.getHubId(), snapshotAvro);
         producer.send(record, (metadata, exception) -> {

@@ -3,7 +3,7 @@ package andrey.service;
 import andrey.repository.AggregatorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AggregatorServiceImpl implements AggregatorService {
@@ -26,16 +26,19 @@ public class AggregatorServiceImpl implements AggregatorService {
             return Optional.empty();
         }
 
-        SensorsSnapshotAvro snapshot = repository.findByHubId(event.getHubId())
-                .orElseGet(() -> createNewSnapshot(event));
-
-        if (!needsUpdate(snapshot, event)) {
-            return Optional.empty();
+        Optional<SensorsSnapshotAvro> optCurrentSnapshot = repository.findByHubId(event.getHubId());
+        if (optCurrentSnapshot.isPresent()) {
+            if(!needsUpdate(optCurrentSnapshot.get(), event)) {
+                return Optional.empty();
+            }
+            SensorsSnapshotAvro snapshotAvro = updateSnapshot(optCurrentSnapshot.get(), event);
+            repository.save(snapshotAvro);
+            return Optional.of(snapshotAvro);
+        } else {
+            SensorsSnapshotAvro snapshotAvro = createNewSnapshot(event);
+            repository.save(snapshotAvro);
+            return Optional.of(snapshotAvro);
         }
-
-        SensorsSnapshotAvro updatedSnapshot = updateSnapshot(snapshot, event);
-        repository.save(updatedSnapshot);
-        return Optional.of(updatedSnapshot);
     }
 
     private boolean needsUpdate(SensorsSnapshotAvro snapshot, SensorEventAvro event) {
