@@ -26,19 +26,19 @@ public class AggregatorServiceImpl implements AggregatorService {
             return Optional.empty();
         }
 
+        SensorsSnapshotAvro snapshotAvro;
+
         Optional<SensorsSnapshotAvro> optCurrentSnapshot = repository.findByHubId(event.getHubId());
         if (optCurrentSnapshot.isPresent()) {
             if(!needsUpdate(optCurrentSnapshot.get(), event)) {
                 return Optional.empty();
             }
-            SensorsSnapshotAvro snapshotAvro = updateSnapshot(optCurrentSnapshot.get(), event);
-            repository.save(snapshotAvro);
-            return Optional.of(snapshotAvro);
+            snapshotAvro = updateSnapshot(optCurrentSnapshot.get(), event);
         } else {
-            SensorsSnapshotAvro snapshotAvro = createNewSnapshot(event);
-            repository.save(snapshotAvro);
-            return Optional.of(snapshotAvro);
+            snapshotAvro = createNewSnapshot(event);
         }
+        repository.save(snapshotAvro);
+        return Optional.of(snapshotAvro);
     }
 
     private boolean needsUpdate(SensorsSnapshotAvro snapshot, SensorEventAvro event) {
