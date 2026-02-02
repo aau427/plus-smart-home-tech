@@ -12,7 +12,7 @@ import telemetry.EventAvroSerializer;
 import java.util.Properties;
 
 @Configuration
-public class CustomProducerConfig {
+public class AggregatorProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
