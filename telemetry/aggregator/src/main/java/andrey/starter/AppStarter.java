@@ -40,11 +40,13 @@ public class AppStarter {
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
         try {
             consumer.subscribe(List.of(subscriptionTopic));
+            log.info("Успешно подписались на топик {}", subscriptionTopic);
             while (true) {
                 ConsumerRecords<String, SensorEventAvro> records =
                         consumer.poll(Duration.ofMillis(1000));
                 if (!records.isEmpty()) {
                     for (ConsumerRecord<String, SensorEventAvro> record : records) {
+                        log.info("Получено сообщение {}", record.value().getId());
                         Optional<SensorsSnapshotAvro> optEvent = service.updateState(record.value());
                         optEvent.ifPresent(this::sendSnapshot);
                     }
