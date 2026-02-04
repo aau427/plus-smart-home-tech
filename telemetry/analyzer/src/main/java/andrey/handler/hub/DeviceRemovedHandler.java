@@ -15,7 +15,7 @@ public class DeviceRemovedHandler implements HubEventHandler {
 
     @Override
     public String getType() {
-        return "DeviceRemovedEventAvro";
+        return DeviceRemovedEventAvro.class.getSimpleName();
     }
 
     @Override

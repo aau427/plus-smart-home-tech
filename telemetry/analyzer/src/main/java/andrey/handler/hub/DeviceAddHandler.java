@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 @Component
@@ -17,7 +18,7 @@ public class DeviceAddHandler implements HubEventHandler {
 
     @Override
     public String getType() {
-        return "DeviceAddEventAvro";
+        return DeviceAddedEventAvro.class.getSimpleName();
     }
 
     @Override

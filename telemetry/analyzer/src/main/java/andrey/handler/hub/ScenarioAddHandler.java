@@ -32,7 +32,7 @@ public class ScenarioAddHandler implements HubEventHandler {
 
     @Override
     public String getType() {
-        return "ScenarioAddEventAvro";
+        return ScenarioAddedEventAvro.class.getSimpleName();
     }
 
     @Override
@@ -78,6 +78,8 @@ public class ScenarioAddHandler implements HubEventHandler {
                 .toList();
         //я тихо схожу с ума....
         actionRepository.saveAll(actions);
+        log.info("Сценарий '{}' для хаба {} успешно сохранен. Условий: {}, Действий: {}",
+                payload.getName(), hubId, conditions.size(), actions.size());
     }
 
     private boolean isAllSensorsExists(HubEventAvro event) {
