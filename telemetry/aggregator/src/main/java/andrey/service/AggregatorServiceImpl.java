@@ -30,7 +30,7 @@ public class AggregatorServiceImpl implements AggregatorService {
 
         Optional<SensorsSnapshotAvro> optCurrentSnapshot = repository.findByHubId(event.getHubId());
         if (optCurrentSnapshot.isPresent()) {
-            if(!needsUpdate(optCurrentSnapshot.get(), event)) {
+            if (!needsUpdate(optCurrentSnapshot.get(), event)) {
                 return Optional.empty();
             }
             snapshotAvro = updateSnapshot(optCurrentSnapshot.get(), event);
