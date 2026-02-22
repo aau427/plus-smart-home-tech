@@ -9,9 +9,6 @@ spring:
         native:
           searchLocations:
             - classpath:config/telemetry/{application}
-  eureka:
-    client:
-      serviceUrl:
-        defaultZone: http://localhost:8761/eureka
+            - classpath:config/commerce/{application}
 server:
   port: 8888
