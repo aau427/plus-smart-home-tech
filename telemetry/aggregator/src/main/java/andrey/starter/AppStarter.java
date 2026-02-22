@@ -27,7 +27,7 @@ public class AppStarter {
     private final AggregatorService service;
 
     @Value("${aggregator.topics.consumer}")
-    String subscriptionTopic;
+    private String subscriptionTopic;
 
     @Value("${aggregator.topics.producer}")
     String topicForProducer;
