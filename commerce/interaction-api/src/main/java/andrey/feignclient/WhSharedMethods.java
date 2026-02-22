@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@FeignClient(name = "warehouse", path = "/api/v1/warehouse")
+@FeignClient(name = "warehouse", contextId = "warehouseShared", path = "/api/v1/warehouse")
 public interface WhSharedMethods {
     @PostMapping("/check")
     @ResponseStatus(HttpStatus.OK)
