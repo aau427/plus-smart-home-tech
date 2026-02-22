@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +53,14 @@ public class AppStarter {
                         log.info("Агрегатор: Получено сообщение {}", record.value().getId());
                         Optional<SensorsSnapshotAvro> optEvent = service.updateState(record.value());
                         optEvent.ifPresent(this::sendSnapshot);
+
+                        // Фиксируем оффсет КОНКРЕТНОЙ записи
+                        // Коммитим оффсет следующей записи (record.offset() + 1)
+                        TopicPartition partition = new TopicPartition(record.topic(), record.partition());
+                        OffsetAndMetadata offsetMetadata = new OffsetAndMetadata(record.offset() + 1);
+
+                        consumer.commitSync(Collections.singletonMap(partition, offsetMetadata));
                     }
-                    consumer.commitSync();
                 }
             }
         } catch (WakeupException wakeupException) {
