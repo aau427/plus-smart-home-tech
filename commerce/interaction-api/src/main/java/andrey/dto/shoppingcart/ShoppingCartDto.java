@@ -19,5 +19,5 @@ public class ShoppingCartDto {
 
 
     @NotNull(message = "Не задано ни одного идентификатора товара и его количество")
-    private Map<UUID, Integer> products;
+    private Map<UUID, Long> products;
 }

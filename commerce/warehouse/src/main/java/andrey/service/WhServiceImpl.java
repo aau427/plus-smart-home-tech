@@ -7,6 +7,7 @@ import andrey.dto.warehouse.BookedProductsDto;
 import andrey.dto.warehouse.NewProductInWarehouseRequest;
 import andrey.exception.warehouse.NoSpecifiedProductInWarehouseException;
 import andrey.exception.warehouse.NotEnoughQuantityException;
+import andrey.exception.warehouse.ProductQuantityErrorDetail;
 import andrey.exception.warehouse.SpecifiedProductAlreadyInWarehouseException;
 import andrey.mapper.WhMapper;
 import andrey.model.Product;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,36 +58,51 @@ public class WhServiceImpl implements WhService {
 
     @Override
     public BookedProductsDto checkQuantityForCart(ShoppingCartDto cart) {
+        List<ProductQuantityErrorDetail> quantityErrors = new ArrayList<>();
         BigDecimal totalWeight = BigDecimal.ZERO;
         BigDecimal totalVolume = BigDecimal.ZERO;
         boolean hasFragile = false;
 
         for (var entry : cart.getProducts().entrySet()) {
             UUID productId = entry.getKey();
-            Integer quantityInCart = entry.getValue();
+            Long quantityInCart = entry.getValue();
 
             Product product = repository.findById(productId)
                     .orElseThrow(() -> new NoSpecifiedProductInWarehouseException(productId));
 
             if (product.getQuantity() < quantityInCart) {
-                throw new NotEnoughQuantityException(productId);
+                quantityErrors.add(new ProductQuantityErrorDetail(
+                        productId,
+                        quantityInCart,
+                        product.getQuantity()
+                ));
             }
 
-            // Считаем вес: weight * quantity
-            BigDecimal itemWeight = product.getWeight().multiply(BigDecimal.valueOf(quantityInCart));
-            totalWeight = totalWeight.add(itemWeight);
+            //если есть ошибки, то смысла вычислять уже нет, все равно верну ошиюку
+            if (quantityErrors.isEmpty()) {
+                // Считаем вес: weight * quantity
+                BigDecimal itemWeight = product.getWeight().multiply(BigDecimal.valueOf(quantityInCart));
+                totalWeight = totalWeight.add(itemWeight);
 
-            // Считаем объем: (w * h * d) * quantity
-            BigDecimal itemVolume = product.getDimension().getWidth()
-                    .multiply(product.getDimension().getHeight())
-                    .multiply(product.getDimension().getDepth())
-                    .multiply(BigDecimal.valueOf(quantityInCart));
-            totalVolume = totalVolume.add(itemVolume);
+                // Считаем объем: (w * h * d) * quantity
+                BigDecimal itemVolume = product.getDimension().getWidth()
+                        .multiply(product.getDimension().getHeight())
+                        .multiply(product.getDimension().getDepth())
+                        .multiply(BigDecimal.valueOf(quantityInCart));
+                totalVolume = totalVolume.add(itemVolume);
 
-            // Если хоть один хрупкий — вся посылка хрупкая
-            if (product.getFragile()) {
-                hasFragile = true;
+                // Если хоть один хрупкий — вся посылка хрупкая
+                if (product.getFragile()) {
+                    hasFragile = true;
+                }
             }
+        }
+
+
+        if (!quantityErrors.isEmpty()) {
+            NotEnoughQuantityException mainException = new NotEnoughQuantityException();
+            quantityErrors.forEach(mainException::addSuppressed); // Добавляем все накопленные ошибки в suppressed
+            throw mainException;
         }
 
         return BookedProductsDto.builder()
