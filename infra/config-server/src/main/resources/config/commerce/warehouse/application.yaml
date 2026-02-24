@@ -6,7 +6,7 @@ spring:
       write-sort-keys-as-ids-allowed: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sht-db?currentSchema=wh
+    url: jdbc:postgresql://localhost:5432/warehouse-db?currentSchema=wh
     username: user
     password: user
     driver-class-name: org.postgresql.Driver
