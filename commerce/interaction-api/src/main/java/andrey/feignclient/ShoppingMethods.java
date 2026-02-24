@@ -50,8 +50,4 @@ public interface ShoppingMethods {
     @GetMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     public ProductDto getProductById(@PathVariable UUID productId);
-
-    @GetMapping("/products")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<ProductDto> getAllProducts(Pageable pageable);
 }

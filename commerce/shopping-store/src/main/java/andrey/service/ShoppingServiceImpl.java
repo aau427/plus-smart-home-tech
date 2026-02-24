@@ -99,11 +99,6 @@ public class ShoppingServiceImpl implements ShoppingService {
         return mapper.toDto(product);
     }
 
-    @Override
-    public Page<ProductDto> getAllProducts(Pageable pageable) {
-        return repository.findAll(pageable).map(mapper::toDto);
-    }
-
     private Product getProductByIdCustom(UUID productId) {
         return repository.findById(productId).orElseThrow(
                 () -> new EntityNotFoundException("Товар " + productId + " не найден!")

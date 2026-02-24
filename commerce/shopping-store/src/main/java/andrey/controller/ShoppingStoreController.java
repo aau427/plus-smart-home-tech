@@ -81,11 +81,4 @@ public class ShoppingStoreController implements ShoppingMethods {
     public ProductDto getProductById(@PathVariable UUID productId) {
         return service.getProductById(productId);
     }
-
-    @Override
-    @GetMapping("/products")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<ProductDto> getAllProducts(Pageable pageable) {
-        return service.getAllProducts(pageable);
-    }
 }

@@ -43,9 +43,4 @@ public interface ShoppingService {
      * Получение детальной информации о товаре по его ID.
      */
     ProductDto getProductById(UUID productId);
-
-    /**
-     * Получение страницы всех товаров без фильтрации.
-     */
-    Page<ProductDto> getAllProducts(Pageable pageable);
 }
