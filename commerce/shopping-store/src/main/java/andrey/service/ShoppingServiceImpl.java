@@ -40,6 +40,7 @@ public class ShoppingServiceImpl implements ShoppingService {
     public ProductDto addProduct(ProductDto productDto) {
 
         Product product = mapper.toEntity(productDto);
+        product.setProductState(ProductState.ACTIVE);
         if (product.getProductId() == null) {
             product.setProductId(UUID.randomUUID());
             log.info("Сгенерирован новый ID для товара: {}", product.getProductId());
