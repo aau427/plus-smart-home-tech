@@ -3,6 +3,7 @@ package andrey.service;
 import andrey.dto.shoppingcart.ChangeProductQuantityRequest;
 import andrey.dto.shoppingcart.ShoppingCartDto;
 import andrey.enums.ShoppingCartState;
+import andrey.exception.cart.CartNotAllowedForModification;
 import andrey.exception.cart.NoProductsInShoppingCartException;
 import andrey.feignclient.WhSharedMethods;
 import andrey.mapper.CartMapper;
@@ -32,6 +33,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public ShoppingCartDto addProductsToCart(String username, Map<UUID, Integer> newProducts) {
         ShoppingCart cart = createOrGetIfExistsCart(username);
+        validateCart(cart);
         if (newProducts != null) {
             newProducts.forEach(
                     (productId, quantity) -> cart.getProducts().merge(productId, quantity,
@@ -49,6 +51,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public ShoppingCartDto removeProductsFromCart(String username, Set<UUID> products) {
         ShoppingCart cart = getOrThrowNotFoundException(username);
+        validateCart(cart);
         checkProductsExistInCart(cart, products);
         products.forEach(productId -> cart.getProducts().remove(productId));
         ShoppingCart newCart = repository.save(cart);
@@ -84,6 +87,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest request) {
         ShoppingCart cart = getOrThrowNotFoundException(username);
+        validateCart(cart);
         UUID productId = request.getProductId();
         if (!cart.getProducts().containsKey(productId)) {
             throw new NoProductsInShoppingCartException(
@@ -135,6 +139,12 @@ public class CartServiceImpl implements CartService {
         if (!cart.getProducts().keySet().containsAll(products)) {
             throw new NoProductsInShoppingCartException(
                     "Все удаляемые товары должны быть в корзине!");
+        }
+    }
+
+    private void validateCart(ShoppingCart cart) {
+        if (cart.getCartState() == ShoppingCartState.DEACTIVATED) {
+            throw new CartNotAllowedForModification(cart.getCartId());
         }
     }
 }
