@@ -7,12 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -38,9 +41,11 @@ public class HubEventProcessor implements Runnable {
                     HubEventHandler handler = hubEventFactory.getHandlerForHubEvent(event.getPayload().getClass().getSimpleName())
                             .orElseThrow(() -> new IllegalArgumentException("Не найден обработчки для событя " + event.getSchema().getName()));
                     handler.handle(event);
-                }
-                if (!records.isEmpty()) {
-                    hubConsumer.commitSync();
+
+                    TopicPartition partition = new TopicPartition(record.topic(), record.partition());
+                    OffsetAndMetadata offsetMeta = new OffsetAndMetadata(record.offset() + 1);
+
+                    hubConsumer.commitSync(Collections.singletonMap(partition, offsetMeta));
                 }
             }
         } catch (WakeupException wakeupException) {
