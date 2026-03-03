@@ -1,0 +1,42 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: delivery
+
+    serialization:
+      write-sort-keys-as-ids-allowed: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5436/delivery-db
+    username: user
+    password: user
+    driver-class-name: org.postgresql.Driver
+
+  sql:
+    init:
+      # Всегда выполнять скрипты при старте
+      mode: always
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    andrey: INFO
+    # Логирование SQL-запросов и их параметров
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+eureka:
+  instance:
+    # Мы заменяем статичный :0 на рандом, чтобы заставить Eureka
+    # перечитать данные инстанса после старта Tomcat
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
