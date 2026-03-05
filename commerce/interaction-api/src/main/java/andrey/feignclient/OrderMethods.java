@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @FeignClient(name = "order", path = "/api/v1/order")
 public interface OrderMethods {
-    //TODO: убрать лишнее
 
     //регистрация заказа
     @PutMapping

@@ -27,7 +27,7 @@ public interface PaymentMethods {
     //успешная оплата в платежной шлюзе
     @PostMapping("/refund")
     @ResponseStatus(HttpStatus.OK)
-    public void confirmPayment(@RequestBody UUID paymentId);
+    void confirmPayment(@RequestBody UUID paymentId);
 
     //Расчёт стоимости товаров в заказе.
     @PostMapping("/productCost")

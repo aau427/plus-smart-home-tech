@@ -17,7 +17,7 @@ public class CreateNewOrderRequest {
     private ShoppingCartDto shoppingCart;
 
     @NotNull
-    String username;
+    private String username;
 
     @NotNull
     @Valid

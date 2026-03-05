@@ -16,5 +16,5 @@ public class ProductReturnRequest {
     private UUID orderId;
 
     @NotNull(message = "Не указаны продукты в заказе")
-    Map<UUID, Long> products;
+    private Map<UUID, Long> products;
 }
