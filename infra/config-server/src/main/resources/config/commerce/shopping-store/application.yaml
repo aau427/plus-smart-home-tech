@@ -6,7 +6,7 @@ spring:
       write-sort-keys-as-ids-allowed: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/store-db?currentSchema=store
+    url: jdbc:postgresql://localhost:5433/store-db?currentSchema=store
     username: user
     password: user
     driver-class-name: org.postgresql.Driver
@@ -32,6 +32,10 @@ logging:
     # Логирование SQL-запросов и их параметров
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
-
+eureka:
+  instance:
+    # Убираем статический ":0" через рандом или IP
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
 server:
   port: 0

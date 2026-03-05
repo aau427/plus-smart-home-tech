@@ -34,12 +34,61 @@ services:
                              --bootstrap-server kafka:29092'"
     init: true
 
-  database:
+  cart-database:
     image: postgres:16.1
-    container_name: smarthomadb
+    container_name: cart-db-container
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=sht-db
+      - POSTGRES_DB=cart-db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+
+  store-database:
+    image: postgres:16.1
+    container_name: store-db-container
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=store-db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+  warehouse-database:
+    image: postgres:16.1
+    container_name: warehouse-db-container
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_DB=warehouse-db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+
+  order-database:
+    image: postgres:16.1
+    container_name: order-db-container
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=order-db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+
+  delivery-database:
+    image: postgres:16.1
+    container_name: delivery-db-container
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_DB=delivery-db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+
+  payment-database:
+    image: postgres:16.1
+    container_name: payment-db-container
+    ports:
+      - "5437:5432"
+    environment:
+      - POSTGRES_DB=payment-db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=user

@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class CartServiceImpl implements CartService {
@@ -59,6 +59,7 @@ public class CartServiceImpl implements CartService {
         return mapper.toDto(newCart);
     }
 
+    @Transactional
     @Override
     public ShoppingCartDto getCart(String username) {
         /*
@@ -68,6 +69,7 @@ public class CartServiceImpl implements CartService {
         return mapper.toDto(cart);
     }
 
+    @Transactional
     @Override
     public void deactivateCart(String username) {
 
@@ -84,6 +86,7 @@ public class CartServiceImpl implements CartService {
                 cart.getCartId(), cart.getUsername());
     }
 
+    @Transactional
     @Override
     public ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest request) {
         ShoppingCart cart = getOrThrowNotFoundException(username);

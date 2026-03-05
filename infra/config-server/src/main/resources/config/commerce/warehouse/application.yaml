@@ -6,7 +6,7 @@ spring:
       write-sort-keys-as-ids-allowed: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/warehouse-db?currentSchema=wh
+    url: jdbc:postgresql://localhost:5434/warehouse-db?currentSchema=wh
     username: user
     password: user
     driver-class-name: org.postgresql.Driver
@@ -35,3 +35,9 @@ logging:
 
 server:
   port: 0
+
+eureka:
+  instance:
+    # Убираем статический ":0" через рандом или IP
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true

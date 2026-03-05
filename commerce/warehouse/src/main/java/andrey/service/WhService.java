@@ -1,12 +1,10 @@
 package andrey.service;
 
 import andrey.dto.shoppingcart.ShoppingCartDto;
-import andrey.dto.warehouse.AddProductToWarehouseRequest;
-import andrey.dto.warehouse.AddressDto;
-import andrey.dto.warehouse.BookedProductsDto;
-import andrey.dto.warehouse.NewProductInWarehouseRequest;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
+import andrey.dto.warehouse.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 public interface WhService {
 
@@ -14,7 +12,13 @@ public interface WhService {
 
     void increaseProductQuantity(AddProductToWarehouseRequest request);
 
-    BookedProductsDto checkQuantityForCart(@Valid @RequestBody ShoppingCartDto cart);
+    BookedProductsDto checkQuantityForCart(ShoppingCartDto cart);
 
     AddressDto getWhAddress();
+
+    BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest request);
+
+    void sendToDelivery(ShippedToDeliveryRequest request);
+
+    void returnProducts(Map<UUID, Long> products);
 }

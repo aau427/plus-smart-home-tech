@@ -33,7 +33,7 @@ public interface ShoppingMethods {
 
     @PostMapping("/removeProductFromStore")
     @ResponseStatus(HttpStatus.OK)
-    public boolean removeProduct(@Valid @RequestBody UUID productId);
+    boolean removeProduct(@Valid @RequestBody UUID productId);
 
     @PostMapping("/quantityState")
     @ResponseStatus(HttpStatus.OK)
@@ -43,11 +43,11 @@ public interface ShoppingMethods {
     //чтобы пройти тесты добавил отдельный метод для обработки урла с параметрами.
     @PostMapping(value = "/quantityState", params = {"productId", "quantityState"})
     @ResponseStatus(HttpStatus.OK)
-    public boolean updateQuantityStateParams(
+    boolean updateQuantityStateParams(
             @RequestParam UUID productId,
             @RequestParam QuantityState quantityState);
 
     @GetMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDto getProductById(@PathVariable UUID productId);
+    ProductDto getProductById(@PathVariable UUID productId);
 }

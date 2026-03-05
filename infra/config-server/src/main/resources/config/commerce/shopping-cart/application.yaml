@@ -1,3 +1,6 @@
+server:
+  port: 0
+
 spring:
   application:
     name: shopping-cart
@@ -32,6 +35,9 @@ logging:
     # Логирование SQL-запросов и их параметров
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
-
-server:
-  port: 0
+eureka:
+  instance:
+    # Мы заменяем статичный :0 на рандом, чтобы заставить Eureka
+    # перечитать данные инстанса после старта Tomcat
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
